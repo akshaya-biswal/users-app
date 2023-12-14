@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import http from '../../../shared/http';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { setUsersData } from '../actions';
 import DynamicGrid from '../../../shared/DynamicGrid';
 
 export default function UsersList() {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
+
+  const { pages, currentPage, isLoading, error } = state.usersReducer.toJS();
+
+  console.log(pages, currentPage, isLoading, error);
+
   useEffect(() => {
-    (async function () {
-      try {
-        const result = await http.get('users');
-        setData(result.data);
-      } catch (err) {
-      } finally {
-      }
-    })();
-  }, []);
+    dispatch(setUsersData()); // Dispatch the Redux action to load user data
+  }, [dispatch]);
 
   const columns = [
     { field: 'id', title: 'ID', width: 120 },
@@ -23,17 +24,13 @@ export default function UsersList() {
     { field: 'status', title: 'Status', width: 120 },
   ];
 
-  console.log(data);
-
   return (
     <>
       <div>UsersList</div>
-      {Array.isArray(data) && (
+      {Array.isArray(pages[currentPage]) && (
         <DynamicGrid
-          data={data}
-          //   onPageChange={onPageChange}
+          data={pages[currentPage].toArray()}
           total={100}
-          //   skip={getCurrentPageNumber(url) - 1}
           pageable={{
             buttonCount: 5,
             type: 'numeric',
@@ -45,3 +42,12 @@ export default function UsersList() {
     </>
   );
 }
+
+// (async function () {
+//   try {
+//     const result = await http.get('users');
+//     setData(result.data);
+//   } catch (err) {
+//   } finally {
+//   }
+// })();

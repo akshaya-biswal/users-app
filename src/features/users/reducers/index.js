@@ -1,4 +1,10 @@
 import { Map, Set } from 'immutable';
+import {
+  SET_USERS_DATA,
+  SET_USERS_DATA_PENDING,
+  SET_USERS_DATA_FULFILLED,
+  SET_USERS_DATA_REJECTED,
+} from '../actions';
 
 const initialState = Map({
   pages: Map({ 1: Set() }),
@@ -7,42 +13,31 @@ const initialState = Map({
   error: null,
 });
 
-const reducer = (state = initialState, action) => {
+const usersReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'LOAD_USERS_PENDING':
+    case SET_USERS_DATA_PENDING:
       return state.set('isLoading', true).set('error', null);
 
-    // case 'LOAD_USERS_FULFILLED':
-    //   const { currentPage, data } = action.payload;
-
-    //   return state
-    //     .setIn(['pages', currentPage], data)
-    //     .set('currentPage', currentPage)
-    //     .set('isLoading', false);
-
-    case 'LOAD_USERS_REJECTED':
-      return state.set('isLoading', false).set('error', 'Something went wrong');
-
-    case 'SET_USERS_DATA':
+    case SET_USERS_DATA_FULFILLED:
       const { currentPage, data } = action.payload;
 
       return state
         .setIn(['pages', currentPage], data)
-        .set('currentPage', currentPage);
+        .set('currentPage', currentPage)
+        .set('isLoading', false);
+
+    case SET_USERS_DATA_REJECTED:
+      return state.set('isLoading', false).set('error', 'Something went wrong');
+
+    case SET_USERS_DATA:
+      return state;
 
     default:
       return state;
   }
 };
 
-export default reducer;
-
-// case "SET_USERS_DATA":
-//   const { currentPage, data } = action.payload;
-
-//   return state
-//     .setIn(["pages", currentPage], data)
-//     .set("currentPage", currentPage);
+export default usersReducer;
 
 // TODO
 // withMutations
