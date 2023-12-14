@@ -1,18 +1,13 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 
 import { setUsersData } from '../actions';
 import DynamicGrid from '../../../shared/DynamicGrid';
 
-export default function UsersList() {
-  const dispatch = useDispatch();
-  const state = useSelector((state) => state);
-
-  const { list, isLoading, error } = state.usersReducer.toJS();
-
+const UsersList = ({ list, isLoading, error, fetchData }) => {
   useEffect(() => {
-    dispatch(setUsersData());
-  }, [dispatch]);
+    fetchData();
+  }, [fetchData]);
 
   const columns = [
     { field: 'id', title: 'ID', width: 120 },
@@ -41,4 +36,16 @@ export default function UsersList() {
       )}
     </>
   );
-}
+};
+
+const mapStateToProps = (state) => ({
+  list: state.usersReducer.toJS().list,
+  isLoading: state.usersReducer.toJS().isLoading,
+  error: state.usersReducer.toJS().error,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchData: () => dispatch(setUsersData()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UsersList);
