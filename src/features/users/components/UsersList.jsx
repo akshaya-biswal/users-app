@@ -34,10 +34,7 @@ export default function UsersList() {
         <DynamicGrid
           data={list}
           total={100}
-          pageable={{
-            buttonCount: 5,
-            type: 'numeric',
-          }}
+          pageable={false}
           pageSize={true}
           columns={columns}
         />
