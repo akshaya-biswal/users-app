@@ -8,12 +8,10 @@ export default function UsersList() {
   const dispatch = useDispatch();
   const state = useSelector((state) => state);
 
-  const { pages, currentPage, isLoading, error } = state.usersReducer.toJS();
-
-  console.log(pages, currentPage, isLoading, error);
+  const { list, isLoading, error } = state.usersReducer.toJS();
 
   useEffect(() => {
-    dispatch(setUsersData()); // Dispatch the Redux action to load user data
+    dispatch(setUsersData());
   }, [dispatch]);
 
   const columns = [
@@ -26,10 +24,15 @@ export default function UsersList() {
 
   return (
     <>
-      <div>UsersList</div>
-      {Array.isArray(pages[currentPage]) && (
+      <h1>UsersList</h1>
+
+      {isLoading && <h2>Loading...</h2>}
+
+      {error && <h2>Error...</h2>}
+
+      {Array.isArray(list) && (
         <DynamicGrid
-          data={pages[currentPage].toArray()}
+          data={list}
           total={100}
           pageable={{
             buttonCount: 5,
@@ -42,12 +45,3 @@ export default function UsersList() {
     </>
   );
 }
-
-// (async function () {
-//   try {
-//     const result = await http.get('users');
-//     setData(result.data);
-//   } catch (err) {
-//   } finally {
-//   }
-// })();
